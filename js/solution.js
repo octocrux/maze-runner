@@ -13,11 +13,41 @@
      * @returns {[number, number][]} маршрут к выходу представленный списоком пар координат
      */
     function solution(maze, x, y) {
-        // todo: построить правильный маршрут к выходу
-        return [
-            [1, 0],
-            [1, 1]
-        ];
+        var path = [];
+        var xMax = maze[0].length - 1;
+        var yMax = maze.length - 1;
+
+        function findExit(x, y) {
+            if (maze[y][x] === CURRENT || maze[y][x] === WALL) return false;
+            if (maze[y][x] === EMPTY) {
+                maze[y][x] = CURRENT;
+                if (y === yMax) {
+                    path.push([x,y]);
+                    return true;
+                }
+            }
+            if ((x > 0) && findExit(x-1, y)) {
+                path.push([x,y]);
+                return true;
+            }
+            if ((y < yMax) && findExit(x, y+1)) {
+                path.push([x,y]);
+                return true;
+            }
+            if ((x < xMax) && findExit(x+1, y)) {
+                path.push([x,y]);
+                return true;
+            }
+            if ((y > 0) && findExit(x, y-1)) {
+                path.push([x,y]);
+                return true;
+            }
+            return false;
+        }
+
+        findExit(x, y);
+
+        return path;
     }
 
     root.maze.solution = solution;
