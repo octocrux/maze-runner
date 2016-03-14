@@ -18,17 +18,15 @@
     }
 
     /**
-     * Создает визуализацию лабиринта по его схеме с возможностью наложения маршрута
+     * Накладывает точки маршрута на схему лабиринта
      *
      * @param {number[][]} maze схема лабиринта
      * @param {[number, number][]} [path] маршрут
-     * @returns {HTMLElement} HTML элемент
      */
-    function render(maze, path) {
-        if (path && path.length) {
-            var point, 
-                i;
+    function applyPath(maze, path) {
+        var point, i;
 
+        if (path && path.length) {
             for (i = 0; i < path.length; i++) {
                 point = path[i];
                 maze[point[1]][point[0]] = PATH;
@@ -36,7 +34,33 @@
             point = path[path.length - 1];
             maze[point[1]][point[0]] = CURRENT;
         }
+    }
 
+    /**
+     * Стирает точки маршрута со схемы лабиринта
+     *
+     * @param {number[][]} maze схема лабиринта
+     * @param {[number, number][]} [path] маршрут
+     */
+    function erasePath(maze, path) {
+        var point, i;
+
+        if (path && path.length) {
+            for (i = 0; i < path.length; i++) {
+                point = path[i];
+                maze[point[1]][point[0]] = EMPTY;
+            }
+        }
+    }
+
+    /**
+     * Создает визуализацию лабиринта по его схеме с возможностью наложения маршрута
+     *
+     * @param {number[][]} maze схема лабиринта
+     * @param {[number, number][]} [path] маршрут
+     * @returns {HTMLElement} HTML элемент
+     */
+    function render(maze, path) {
         var containerElem = element('div', 'maze'),
             rowElem,
             type,
@@ -44,6 +68,8 @@
             cell,
             x, 
             y;
+
+        applyPath(maze, path);
 
         for (y = 0; y < maze.length; y++) {
             row = maze[y];
@@ -76,6 +102,7 @@
 
             containerElem.appendChild(rowElem);
         }
+        erasePath(maze, path);
 
         return containerElem;
     }

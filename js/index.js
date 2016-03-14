@@ -1,8 +1,11 @@
 (function (root) {
-    var map = root.maze.MAZE_Y;
-    var path = root.maze.solution(map, 1, 0);
+    var solutionState = {
+      maze: root.maze.MAZE_Y,
+      currentPoint: [1, 0],
+      path: [],
+      pathFound: false,
+      currentDirection: root.maze.DOWN
+    };
 
-    document.querySelector('.outer').appendChild(
-        root.maze.render(map, path)
-    );
+    setInterval(root.maze.solution, 10, solutionState);
 })(this);
