@@ -107,5 +107,16 @@
         return containerElem;
     }
 
+    function redraw (maze, path) {
+        var mazeDiv = document.getElementsByClassName('maze')[0];
+            if (mazeDiv) {
+                mazeDiv.remove();
+            }
+            document.querySelector('.outer').appendChild(
+                root.maze.render(maze, path)
+            );
+    }
+
+    root.maze.redraw = redraw;
     root.maze.render = render;
 })(this);

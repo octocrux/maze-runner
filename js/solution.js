@@ -48,7 +48,7 @@
 
         function move () {
             forward();
-            redrawMaze();
+            root.maze.redraw(state.maze, state.path);
         }
 
         function obstacleMet (direction) {
@@ -80,16 +80,6 @@
             forward = movingDirections[state.currentDirection];
         }
 
-        function redrawMaze () {
-            var mazeDiv = document.getElementsByClassName('maze')[0];
-            if (mazeDiv) {
-                mazeDiv.remove();
-            }
-            document.querySelector('.outer').appendChild(
-                root.maze.render(state.maze, state.path)
-            );
-        }
-
         if (state.pathFound) { return; }
 
         state.pathFound = (state.maze[currentPoint[1]][currentPoint[0]] === EMPTY &&
@@ -98,7 +88,7 @@
         if (state.pathFound)
         {
             state.path.push(state.currentPoint);
-            redrawMaze();
+            root.maze.redraw(state.maze, state.path);
             return;
         }
 
