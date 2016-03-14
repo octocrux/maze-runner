@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
+    <div class="controls">
+        <select id="pattern" class="controls__selector">
+            <option value="mazeY" selected="selected">Яндекс</option>
+            <option value="maze21">21 х 21</option>
+            <option value="maze31">31 х 31</option>
+            <option value="maze51">51 х 51</option>
+        </select>
+        <button id="restart" class="controls__button">Старт</button>
+        <button id="run" class="controls__button">Дальше</button>
+    </div>
     <div class="outer"></div>
     <script src="js/consts.js"></script>
     <script src="js/render.js"></script>
