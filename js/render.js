@@ -32,7 +32,6 @@
                 maze[point[1]][point[0]] = PATH;
             }
             point = path[path.length - 1];
-            maze[point[1]][point[0]] = CURRENT;
         }
     }
 

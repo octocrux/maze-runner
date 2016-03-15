@@ -85,5 +85,5 @@
         root.maze.redraw(state.maze);
     }
 
-    root.maze.solution_dijkstra = solution;
+    root.maze.solutionDijkstra = solution;
 })(this);
