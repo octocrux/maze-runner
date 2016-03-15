@@ -15,60 +15,28 @@
      * @param {Object} state объект, содержащий описание текущего состояния решения
      * @param {number[][]} state.maze карта лабиринта, представленная двумерной матрицей чисел
      * @param {[number, number]} state.currentPoint текущая точка искомого пути
-     * @param {number} state.currentDirection направление обхода лабиринта
-     * @param {[number, number][]} state.path пройденный путь
+     * @param {number} state.currentDirection текущее направление обхода лабиринта
+     * @param {[number, number][]} state.path массив точек пройденного пути
      * @param {boolean} state.pathFound флаг успешного окончания поиска
      */
     function solution (state) {
-        var currentPoint = state.currentPoint;
-        var nextPoint;
+        var x = state.currentPoint[0];
+        var y = state.currentPoint[1];
         var movingDirections = [
             function moveUp(){
-                state.path.push(currentPoint);
-                nextPoint = [currentPoint[0], currentPoint[1] - 1];
-                state.currentPoint = nextPoint;
+                state.currentPoint = [x, y - 1];
             },
             function moveRight(){
-                state.path.push(currentPoint);
-                nextPoint = [currentPoint[0] + 1, currentPoint[1]];
-                state.currentPoint = nextPoint;
+                state.currentPoint = [x + 1, y];
             },
             function moveDown(){
-                state.path.push(currentPoint);
-                nextPoint = [currentPoint[0], currentPoint[1] + 1];
-                state.currentPoint = nextPoint;
+                state.currentPoint = [x, y + 1];
             },
             function moveLeft(){
-                state.path.push(currentPoint);
-                nextPoint = [currentPoint[0] - 1, currentPoint[1]];
-                state.currentPoint = nextPoint;
+                state.currentPoint = [x - 1, y];
             }
         ];
         var forward = movingDirections[state.currentDirection];
-
-        function move () {
-            forward();
-            root.maze.redraw(state.maze, state.path);
-        }
-
-        function obstacleMet (direction) {
-            switch(direction) {
-            case UP:
-                return (state.maze[currentPoint[1] - 1][currentPoint[0]] === WALL);
-            case RIGHT:
-                return (state.maze[currentPoint[1]][currentPoint[0] + 1] === WALL);
-            case DOWN:
-                return (state.maze[currentPoint[1] + 1][currentPoint[0]] === WALL);
-            case LEFT:
-                return (state.maze[currentPoint[1]][currentPoint[0] - 1] === WALL);
-            default:
-                return false;
-            }
-        }
-
-        function feelWall (direction) {
-            return obstacleMet((direction+1)%4);
-        }
 
         function turnRight () {
             state.currentDirection = (state.currentDirection + 1) % 4;
@@ -80,19 +48,45 @@
             forward = movingDirections[state.currentDirection];
         }
 
+        function move () {
+            state.path.push([x, y]);
+            forward();
+            root.maze.redraw(state.maze, state.path);
+        }
+
+        function obstacleMet (direction) {
+            switch(direction) {
+            case UP:
+                return (state.maze[y - 1][x] === WALL);
+            case RIGHT:
+                return (state.maze[y][x + 1] === WALL);
+            case DOWN:
+                return (state.maze[y + 1][x] === WALL);
+            case LEFT:
+                return (state.maze[y][x - 1] === WALL);
+            default:
+                return false;
+            }
+        }
+
+        function feelWall (direction) {
+            return obstacleMet((direction+1)%4);
+        }
+
         if (state.pathFound) { return; }
 
-        state.pathFound = (state.maze[currentPoint[1]][currentPoint[0]] === EMPTY &&
-                        currentPoint[1] === state.maze.length - 1);
+        state.pathFound = (state.maze[y][x] === EMPTY &&
+                            y === state.maze.length - 1);
 
         if (state.pathFound)
         {
-            state.path.push(state.currentPoint);
+            state.path.push([x, y]);
             root.maze.redraw(state.maze, state.path);
             return;
         }
 
-        if (feelWall(state.currentDirection) && !obstacleMet(state.currentDirection)) {
+        if (feelWall(state.currentDirection) &&
+            !obstacleMet(state.currentDirection)) {
             move();
             return;
         }
@@ -106,5 +100,5 @@
         }
     }
 
-    root.maze.solution = solution;
+    root.maze.solutionRightHand = solution;
 })(this);
