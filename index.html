@@ -15,6 +15,10 @@
             <option value="maze31">31 х 31</option>
             <option value="maze51">51 х 51</option>
         </select>
+        <select id="algorithm" class="controls__selector">
+            <option value="rightHand" selected="selected">Алгоритм правой руки</option>
+            <option value="dijkstra">Алгоритм Дейкстры</option>
+        </select>
         <button id="restart" class="controls__button">Старт</button>
         <button id="run" class="controls__button">Дальше</button>
     </div>
@@ -22,6 +26,7 @@
     <script src="js/consts.js"></script>
     <script src="js/render.js"></script>
     <script src="js/solution_right_hand.js"></script>
+    <script src="js/solution_dijkstra.js"></script>
     <script src="js/index.js"></script>
 </body>
 </html>
