@@ -12,9 +12,9 @@
      * @returns {HTMLElement} HTML элемент
      */
     function element(type, className) {
-        var elem = document.createElement(type);
-        elem.className = className;
-        return elem;
+        var element = document.createElement(type);
+        element.className = className;
+        return element;
     }
 
     /**
@@ -69,8 +69,6 @@
             x, 
             y;
 
-        applyPath(maze, path);
-
         for (y = 0; y < maze.length; y++) {
             row = maze[y];
             rowElem = element('div', 'maze__row');
@@ -79,6 +77,10 @@
                 cell = row[x];
 
                 switch (cell) {
+                    case EMPTY:
+                        type = 'undefined';
+                        break;
+
                     case WALL:
                         type = 'wall';
                         break;
@@ -92,7 +94,7 @@
                         break;
 
                     default:
-                        type = undefined;
+                        type = 'current';
                 }
 
                 rowElem.appendChild(
@@ -102,21 +104,27 @@
 
             containerElem.appendChild(rowElem);
         }
-        erasePath(maze, path);
 
         return containerElem;
     }
 
+    /**
+     * Перерисовывает схему лабиринта в статично заданном элементе.
+     *
+     * @param {number[][]} maze схема лабиринта
+     * @param {[number, number][]} [path] маршрут
+     */
     function redraw (maze, path) {
-        var mazeDiv = document.getElementsByClassName('maze')[0];
-            if (mazeDiv) {
-                mazeDiv.remove();
-            }
-            document.querySelector('.outer').appendChild(
-                root.maze.render(maze, path)
-            );
+        var div = document.querySelector('.maze');
+        if (div) {
+            div.remove();
+        }
+        applyPath(maze, path);
+        document.querySelector('.outer').appendChild(
+            render(maze, path)
+        );
+        erasePath(maze, path);
     }
 
     root.maze.redraw = redraw;
-    root.maze.render = render;
 })(this);
