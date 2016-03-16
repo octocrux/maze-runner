@@ -2,7 +2,8 @@
     var continueSimulation = false;
     var started = false;
     var timer;
-    var interval = 30;
+    var interval = 100;
+    var speedUp = false;
     var solution;
     var solutionState;
 
@@ -76,8 +77,24 @@
 
     var mazeSelector = document.getElementById('pattern');
     mazeSelector.onchange = function () {
-        solutionState.maze = selectMaze();
+        solutionState.maze = copyMaze(selectMaze());
         root.maze.redraw(solutionState.maze);
+    };
+
+    var speedButton = document.getElementById('speed');
+    speedButton.onclick = function () {
+        speedUp = !speedUp;
+        if (speedUp) {
+            interval = 5;
+            speedButton.textContent = 'Медленнее';
+        } else {
+            interval = 100;
+            speedButton.textContent = 'Быстрее';
+        }
+        if (continueSimulation) {
+            clearInterval(timer);
+            timer = setInterval(solution, interval, solutionState);
+        }
     };
 
     var runButton = document.getElementById('run');
