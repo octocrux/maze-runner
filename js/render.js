@@ -14,6 +14,7 @@
     function element(type, className) {
         var element = document.createElement(type);
         element.className = className;
+
         return element;
     }
 
@@ -36,30 +37,12 @@
     }
 
     /**
-     * Стирает точки маршрута со схемы лабиринта
+     * Создает визуализацию лабиринта по его схеме
      *
      * @param {number[][]} maze схема лабиринта
-     * @param {[number, number][]} [path] маршрут
-     */
-    function erasePath(maze, path) {
-        var point, i;
-
-        if (path && path.length) {
-            for (i = 0; i < path.length; i++) {
-                point = path[i];
-                maze[point[1]][point[0]] = EMPTY;
-            }
-        }
-    }
-
-    /**
-     * Создает визуализацию лабиринта по его схеме с возможностью наложения маршрута
-     *
-     * @param {number[][]} maze схема лабиринта
-     * @param {[number, number][]} [path] маршрут
      * @returns {HTMLElement} HTML элемент
      */
-    function render(maze, path) {
+    function render(maze) {
         var containerElem = element('div', 'maze'),
             rowElem,
             type,
@@ -88,10 +71,6 @@
                         type = 'path';
                         break;
 
-                    case CURRENT:
-                        type = 'current';
-                        break;
-
                     default:
                         type = 'current';
                 }
@@ -108,21 +87,26 @@
     }
 
     /**
-     * Перерисовывает схему лабиринта в статично заданном элементе.
+     * Перерисовывает схему лабиринта в заданном элементе
+     * с возможностью наложения маршрута
      *
      * @param {number[][]} maze схема лабиринта
      * @param {[number, number][]} [path] маршрут
      */
     function redraw (maze, path) {
-        var div = document.querySelector('.maze');
-        if (div) {
-            div.remove();
+        var node = document.querySelector('.maze');
+
+        if (node && node.parentNode) {
+            node.parentNode.removeChild(node);
         }
-        applyPath(maze, path);
+
+        if (path && path.length) {
+            applyPath(maze, path);
+        }
+
         document.querySelector('.outer').appendChild(
             render(maze, path)
         );
-        erasePath(maze, path);
     }
 
     root.maze.redraw = redraw;
