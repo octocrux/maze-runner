@@ -16,12 +16,23 @@ body {
     font-size: small;
 }
 
+.controls__algorithm {}
+
+.controls__pattern {}
+
 .controls__button {
+    display: inline;
     margin-left: 10px;
     margin-top: 10px;
     font-size: small;
     width: 100px;
 }
+
+.controls__run {}
+
+.controls__pause {}
+
+.controls__speed {}
 
 .maze {
     padding: 10px;

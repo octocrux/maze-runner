@@ -1,11 +1,16 @@
 (function (root) {
-    var continueSimulation = false;
-    var started = false;
     var timer;
-    var interval = 100;
-    var speedUp = false;
-    var solution;
+    var renderDelay = 100;
+    var isFast = false;
+    var isPaused = true;
+    var isStarted = false;
+    var algorithm;
     var solutionState;
+    var algorithmSelector = document.querySelector('.controls__algorithm');
+    var mazeSelector = document.querySelector('.controls__pattern');
+    var speedButton = document.querySelector('.controls__speed');
+    var pauseButton = document.querySelector('.controls__pause');
+    var runButton = document.querySelector('.controls__run');
 
     function resetState () {
         var state = {
@@ -18,23 +23,27 @@
             pathFound: false,
             maze: copyMaze(selectMaze())
         };
+
         return state;
     }
 
     function copyMaze (maze) {
         var newMaze = [];
+
         for (var i = 0; i < maze.length; i++) {
             newMaze[i] = [];
             for (var j = 0; j < maze[0].length; j++) {
                 newMaze[i].push(maze[i][j]);
             }
         }
+
         return newMaze;
     }
 
     function selectMaze () {
-        var selectedMaze = document.getElementById('pattern').value;
+        var selectedMaze = mazeSelector.value;
         var maze;
+
         switch (selectedMaze) {
             case 'maze21':
                 maze = root.maze.MAZE_21;
@@ -52,12 +61,14 @@
                 maze = root.maze.MAZE_Y;
                 break;
         }
+
         return maze;
     }
 
     function selectAlgorithm () {
-        var selectedAlgorithm = document.getElementById('algorithm').value;
+        var selectedAlgorithm = algorithmSelector.value;
         var algorithm;
+
         switch (selectedAlgorithm) {
             case 'dijkstra':
                 algorithm = root.maze.solutionDijkstra;
@@ -67,78 +78,89 @@
                 algorithm = root.maze.solutionRightHand;
                 break;
         }
+
         return algorithm;
     }
 
-    var algorithmSelector = document.getElementById('algorithm');
-    algorithmSelector.onchange = function () {
-        solution = selectAlgorithm();
-    };
-
-    var mazeSelector = document.getElementById('pattern');
-    mazeSelector.onchange = function () {
-        solutionState.maze = copyMaze(selectMaze());
-        root.maze.redraw(solutionState.maze);
-    };
-
-    var speedButton = document.getElementById('speed');
-    speedButton.onclick = function () {
-        speedUp = !speedUp;
-        if (speedUp) {
-            interval = 5;
+    function toggleRenderSpeed () {
+        isFast = !isFast;
+        if (isFast) {
+            renderDelay = 5;
             speedButton.textContent = 'Медленнее';
         } else {
-            interval = 100;
+            renderDelay = 100;
             speedButton.textContent = 'Быстрее';
         }
-        if (continueSimulation) {
+        if (!isPaused) {
             clearInterval(timer);
-            timer = setInterval(solution, interval, solutionState);
+            timer = setInterval(algorithm, renderDelay, solutionState);
         }
-    };
+    }
 
-    var runButton = document.getElementById('run');
-    runButton.onclick = function() {
-        continueSimulation = !continueSimulation;
-        if (continueSimulation){
-            timer = setInterval(solution, interval, solutionState);
-            runButton.textContent = 'Пауза';
+    function togglePause () {
+        isPaused = !isPaused;
+        if (isPaused){
+            clearInterval(timer);
+            pauseButton.textContent = 'Дальше';
         }
         else {
-            clearInterval(timer);
-            runButton.textContent = 'Дальше';
+            timer = setInterval(algorithm, renderDelay, solutionState);
+            pauseButton.textContent = 'Пауза';
         }
-    };
+    }
 
-    var restartButton = document.getElementById('restart');
-    restartButton.onclick = function () {
-        started = !started;
-        clearInterval(timer);
+    function toggleSelectorsState (isRunning) {
+        mazeSelector.disabled = isRunning;
+        algorithmSelector.disabled = isRunning;
+    }
 
-        if (started) {
-            continueSimulation = true;
+    function toggleVisibility (element, visible) {
+        element.style.visibility = visible ? 'visible' : 'hidden';
+    }
+
+    function runSolution () {
+        isStarted = !isStarted;
+        if (isStarted) {
             solutionState = resetState();
-
-            mazeSelector.disabled = true;
-            algorithmSelector.disabled = true;
-            runButton.style.display = 'inline';
-            runButton.textContent = 'Пауза';
-            restartButton.textContent = 'Стоп';
-
-            timer = setInterval(solution, interval, solutionState);
+            runButton.textContent = 'Стоп';
+            timer = setInterval(algorithm, renderDelay, solutionState);
+            pauseButton.textContent = 'Пауза';
         } else {
-            continueSimulation = false;
-
-            mazeSelector.disabled = false;
-            algorithmSelector.disabled = false;
-            runButton.style.display = 'none';
-            restartButton.textContent = 'Старт';
+            runButton.textContent = 'Старт';
             root.maze.redraw(selectMaze());
         }
-    };
+        isPaused = !isStarted;
+        toggleSelectorsState(isStarted);
+        toggleVisibility(pauseButton, isStarted);
+    }
 
-    runButton.style.display = 'none';
+    function registerEventHandlers () {
+        algorithmSelector.addEventListener('change', function () {
+            algorithm = selectAlgorithm();
+        });
+
+        mazeSelector.addEventListener('change', function () {
+            solutionState.maze = copyMaze(selectMaze());
+            root.maze.redraw(solutionState.maze);
+        });
+
+        speedButton.addEventListener('click', function () {
+            toggleRenderSpeed();
+        });
+
+        pauseButton.addEventListener('click', function() {
+            togglePause();
+        });
+
+        runButton.addEventListener('click', function () {
+            clearInterval(timer);
+            runSolution();
+        });
+    }
+
+    registerEventHandlers();
+    toggleVisibility(pauseButton, false);
     solutionState = resetState();
-    solution = selectAlgorithm();
+    algorithm = selectAlgorithm();
     root.maze.redraw(solutionState.maze);
 })(this);

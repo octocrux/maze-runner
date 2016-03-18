@@ -9,21 +9,21 @@
 </head>
 <body>
     <div class="controls">
-        <select id="pattern" class="controls__selector">
+        <select class="controls__selector controls__pattern">
             <option value="mazeY" selected="selected">Яндекс</option>
             <option value="maze21">21 х 21</option>
             <option value="maze31">31 х 31</option>
             <option value="maze51">51 х 51</option>
         </select>
-        <select id="algorithm" class="controls__selector">
+        <select class="controls__selector controls__algorithm">
             <option value="rightHand" selected="selected">Алгоритм правой руки</option>
             <option value="dijkstra">Алгоритм Дейкстры</option>
         </select>
     </div>
     <div class="controls">
-        <button id="restart" class="controls__button">Старт</button>
-        <button id="speed" class="controls__button">Быстрее</button>
-        <button id="run" class="controls__button">Дальше</button>
+        <button class="controls__button controls__run">Старт</button>
+        <button class="controls__button controls__speed">Быстрее</button>
+        <button class="controls__button controls__pause">Пауза</button>
     </div>
     <div class="outer"></div>
     <script src="js/consts.js"></script>
